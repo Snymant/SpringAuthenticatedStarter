@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Springboot thymeleaf security demo</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        <div>Springboot thymeleaf security demo</div>
+        <div sec:authorize="isAuthenticated()">
+            <p>
+                Logged user: <span sec:authentication="name">Bob</span> can also be printed with <span th:text="${#authentication.name}">Bob</span>
+            </p>
+            <p>
+                Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>            
+            </p>
+
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                This content is only shown to administrators.
+            </div>
+            <div sec:authorize="hasRole('ROLE_USER')">
+                This content is only shown to users.
+            </div>
+            
+            <div sec:authorize="hasRole('ROLE_COLLECTOR')">
+                This content is only shown to COLLECTORS.
+            </div>
+            
+            <div sec:authorize="hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')">
+                This content is only shown to users AND admin users.
+            </div>
+
+            <p>
+                you are authenticated, click <a href='/logout'>here</a> to logout
+            </p>
+        </div>
+        <p sec:authorize="!isAuthenticated()">
+            you are not authenticated, click <a href='/login.html'>here</a> to login.
+        </p>
+        <p>for more info see <a href='https://www.thymeleaf.org/doc/articles/springsecurity.html' target="_blank"> thymeleaf</a>
+            and <a href='https://github.com/thymeleaf/thymeleaf-extras-springsecurity' target="_blank"> github </a>
+        </p>
+        <script sec:authorize="isAuthenticated()">
+            fetch("/api/now")
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(e => {
+                        console.dir("error on call ");
+                        console.dir(e);
+                    }
+                    );
+        </script>
+    </body>
+</html>
+
